@@ -47,10 +47,14 @@ export default function heramientas() {
     <ParallaxScrollView
       headerBackgroundColor={{ light: "#D0D0D0", dark: "#353636" }}
       headerImage={
-        <Image
-          source={require("@/assets/images/logo-A3D.png")}
-          style={styles.reactLogo}
-        />
+        <View style={styles.headerContainer}>
+          <Image
+            source={require("@/assets/images/logo-A3D.png")}
+            style={styles.reactLogo}
+          />
+          <Text style={styles.titulo}>HERAMIENTAS</Text>
+          <Text style={styles.tituloDescripcion}>Mi caja</Text>
+        </View>
       }
     >
       <FlatList
@@ -83,25 +87,49 @@ export default function heramientas() {
 }
 
 const styles = StyleSheet.create({
-  headerImage: {
-    color: "#808080",
-    bottom: -90,
-    left: -35,
-    position: "absolute",
+  headerContainer: {
+    padding: 10,
+    justifyContent: "center",
+    alignItems: "center",
+    position: "relative",
+    height: 120,
   },
   reactLogo: {
     height: 100,
-    width: "95%",
-    bottom: 40,
-    right: 20,
-    left: 10,
+    width: "100%",
     position: "absolute",
+    opacity: 0.2,
   },
+  titulo: {
+    // fontFamily: "Fredoka",
+    fontSize: 30,
+    fontWeight: "bold",
+    color: "#333",
+    textAlign: "center",
+  },
+  tituloDescripcion: {
+    left: 80,
+  },
+  // headerImage: {
+  //   color: "#808080",
+  //   bottom: -90,
+  //   left: -35,
+  //   position: "absolute",
+  // },
+  // reactLogo: {
+  //   height: 100,
+  //   width: "95%",
+  //   bottom: 40,
+  //   right: 20,
+  //   left: 10,
+  //   position: "absolute",
+  // },
   titleContainer: {
     flexDirection: "row",
     gap: 8,
   },
   toolItem: {
+    margin: 10,
     justifyContent: "space-between",
     flexDirection: "row",
     alignItems: "center",

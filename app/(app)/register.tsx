@@ -17,8 +17,12 @@ import { ref, onValue, set } from "firebase/database";
 import { auth, db } from "../../firebase";
 import { doc, setDoc } from "firebase/firestore";
 import Header from "../../components/components/Header";
+import { useSession } from "@/ctx";
+import { router } from "expo-router";
 
 export default function RegisterScreen() {
+  const { session, trabajadores, heramientas, fichajes, isLoading, obras } =
+    useSession();
   const navigation = useNavigation();
 
   const [name, setName] = useState({ value: "", error: "" });
@@ -52,6 +56,7 @@ export default function RegisterScreen() {
           email: email.value,
           phoneNumber: phoneNumber.value,
           role: 0,
+          id: user.uid,
         };
 
         try {
@@ -144,7 +149,10 @@ export default function RegisterScreen() {
       )}
       <Button
         mode="outlined"
-        onPress={() => navigation.goBack()}
+        // onPress={() => navigation.goBack()}
+        onPress={() => {
+          router.replace("/settings");
+        }}
         style={{ marginTop: 24 }}
       >
         IR ATRAS

@@ -25,6 +25,9 @@ import { useRouter } from "expo-router";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import DatePicker from "react-native-date-picker";
+import { useSession } from "@/ctx";
+import { SelectList } from "react-native-dropdown-select-list";
+import DropDownPicker from "react-native-dropdown-picker";
 type Fichaje = {
   id: string;
   obra: string;
@@ -33,7 +36,11 @@ type Fichaje = {
   fecha: string;
 };
 export default function HistoryScreen() {
+  const { session, trabajadores, heramientas, isLoading, obras } = useSession();
+
   const router = useRouter();
+
+  const [selected, setSelected] = React.useState("");
   const [fichajes, setFichajes] = useState<Fichaje[]>([]);
   const [loading, setLoading] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
@@ -43,6 +50,11 @@ export default function HistoryScreen() {
   const [salida, setSalida] = useState(new Date());
   const [showEntradaPicker, setShowEntradaPicker] = useState(false);
   const [showSalidaPicker, setShowSalidaPicker] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [selectedObra, setSelectedObra] = useState(obra);
+  const [obrasList, setObrasList] = useState(
+    obras.map((o) => ({ label: o.nombre, value: o.nombre }))
+  );
 
   useEffect(() => {
     const fetchFichajes = async () => {
@@ -110,22 +122,19 @@ export default function HistoryScreen() {
     if (!selectedFichaje) return;
 
     try {
-      await updateDoc(doc(db, "fichajes", selectedFichaje.id), {
-        obra,
+      const updatedData = {
+        obra: selectedObra, // Asegurar que es el valor correcto
         entrada: entrada.toLocaleTimeString("es-ES", { hour12: false }),
         salida: salida.toLocaleTimeString("es-ES", { hour12: false }),
-      });
+      };
 
+      // 🔹 Actualizar en Firestore
+      await updateDoc(doc(db, "fichajes", selectedFichaje.id), updatedData);
+
+      // 🔹 Actualizar el estado local de fichajes
       setFichajes((prev) =>
         prev.map((item) =>
-          item.id === selectedFichaje.id
-            ? {
-                ...item,
-                obra,
-                entrada: entrada.toLocaleTimeString("es-ES", { hour12: false }),
-                salida: salida.toLocaleTimeString("es-ES", { hour12: false }),
-              }
-            : item
+          item.id === selectedFichaje.id ? { ...item, ...updatedData } : item
         )
       );
 
@@ -179,10 +188,14 @@ export default function HistoryScreen() {
             <Text style={styles.modalTitle}>Editar Fichaje</Text>
 
             <Text>Obra:</Text>
-            <TextInput
-              style={styles.input}
-              value={obra}
-              onChangeText={setObra}
+            <DropDownPicker
+              open={open}
+              value={selectedObra}
+              items={obrasList}
+              setOpen={setOpen}
+              setValue={setSelectedObra}
+              setItems={setObrasList}
+              placeholder="Selecciona una obra"
             />
 
             <Text>Hora de Entrada:</Text>
@@ -393,5 +406,28 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 16,
     fontWeight: "bold",
+  },
+  dropdown: {
+    marginHorizontal: 20,
+    borderColor: "#ccc",
+    borderWidth: 1,
+    borderRadius: 10,
+    padding: 10,
+    backgroundColor: "#f9f9f9",
+  },
+  dropdownList: {
+    marginHorizontal: 20,
+    backgroundColor: "#fff",
+    borderColor: "#ddd",
+    borderWidth: 1,
+    borderRadius: 10,
+  },
+  dropdownText: {
+    fontSize: 16,
+    color: "#333",
+  },
+  dropdownInput: {
+    fontSize: 16,
+    color: "#333",
   },
 });

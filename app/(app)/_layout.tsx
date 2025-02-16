@@ -14,7 +14,7 @@ export default function AppLayout() {
   }
 
   return (
-    <Stack screenOptions={{ headerShown: true, headerTitle: "" }}>
+    <Stack screenOptions={{ headerShown: true, headerTitle: "ADMINISTRATOR" }}>
       {/* <Redirect href="/(tabs)/fichar" /> */}
       {/* <Stack.Screen name="fichar" /> */}
     </Stack>

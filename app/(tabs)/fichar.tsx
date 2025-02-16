@@ -139,8 +139,14 @@ export default function HomeScreen() {
   // 🔹 Función para agregar una nueva obra
   const addObra = async () => {
     if (newObra.trim() === "") return;
+
     try {
-      await addDoc(collection(db, "obras"), { nombre: newObra });
+      // Agregar la obra sin ID inicialmente
+      const docRef = await addDoc(collection(db, "obras"), { nombre: newObra });
+
+      // Actualizar la obra con el ID generado por Firestore
+      await updateDoc(doc(db, "obras", docRef.id), { id: docRef.id });
+
       setNewObra(""); // Limpiar input después de agregar
     } catch (error) {
       console.error("Error al agregar obra:", error);
@@ -171,67 +177,76 @@ export default function HomeScreen() {
     <ParallaxScrollView
       headerBackgroundColor={{ light: "#A1CEDC", dark: "#1D3D47" }}
       headerImage={
-        <Image
-          source={require("@/assets/images/logo-A3D.png")}
-          style={styles.logoA3D}
-        />
+        <View style={styles.headerContainer}>
+          <Image
+            source={require("@/assets/images/logo-A3D.png")}
+            style={styles.reactLogo}
+          />
+          {/* <Text style={styles.titulo}>OBRAS</Text>
+          <Text style={styles.tituloDescripcion}>en curso</Text> */}
+        </View>
       }
     >
-      <SelectList
-        maxHeight={400}
-        setSelected={setSelected}
-        data={obras}
-        save="value"
-        placeholder="Elige una obra..."
-        boxStyles={styles.dropdown}
-        dropdownStyles={styles.dropdownList}
-        dropdownTextStyles={styles.dropdownText}
-        inputStyles={styles.dropdownInput}
-        defaultOption={selected ? { key: selected, value: selected } : null} // Aquí se establece la obra seleccionada
-      />
+      <View style={styles.contenedor}>
+        <SelectList
+          maxHeight={400}
+          setSelected={setSelected}
+          data={obras}
+          save="value"
+          placeholder="Elige una obra..."
+          boxStyles={styles.dropdown}
+          dropdownStyles={styles.dropdownList}
+          dropdownTextStyles={styles.dropdownText}
+          inputStyles={styles.dropdownInput}
+          defaultOption={selected ? { key: selected, value: selected } : null} // Aquí se establece la obra seleccionada
+        />
 
-      <View style={styles.ficharContainer}>
-        <Pressable
-          style={[
-            styles.addButton,
-            selected ? styles.buttonActive : styles.buttonDisabled,
-          ]}
-          disabled={!selected}
-          onPress={fichar}
-        >
-          <Text style={styles.buttonLabel}>
-            {fichajeId ? "Fichar SALIDA" : "Fichar ENTRADA"}
-          </Text>
-        </Pressable>
-
-        <View style={{ marginTop: 15 }}>
-          <TextInput
-            autoCorrect={false}
-            style={styles.input}
-            placeholder="Obra nueva..."
-            value={newObra}
-            onChangeText={setNewObra}
-          />
-
+        <View style={styles.ficharContainer}>
           <Pressable
             style={[
               styles.addButton,
-              newObra.trim() ? styles.buttonActive : styles.buttonDisabled,
+              selected ? styles.buttonActive : styles.buttonDisabled,
             ]}
-            onPress={addObra}
-            disabled={!newObra.trim()} // Deshabilita si el input está vacío
+            disabled={!selected}
+            onPress={fichar}
           >
-            <Text style={styles.addButtonText}>OBRA NUEVA</Text>
+            <Text style={styles.buttonLabel}>
+              {fichajeId ? "Fichar SALIDA" : "Fichar ENTRADA"}
+            </Text>
           </Pressable>
-        </View>
 
-        <View style={styles.historyContainer}>
-          <Pressable
-            style={styles.addButton}
-            onPress={() => router.push("/(app)/history")}
-          >
-            <Text style={styles.addButtonText}>HISTORIAL FICHAJES</Text>
-          </Pressable>
+          <View style={{ marginTop: 15 }}>
+            <TextInput
+              autoCorrect={false}
+              style={styles.input}
+              placeholder="Obra nueva..."
+              value={newObra}
+              onChangeText={setNewObra}
+            />
+
+            <Pressable
+              style={[
+                styles.addButton,
+                newObra.trim() ? styles.buttonActive : styles.buttonDisabled,
+              ]}
+              onPress={addObra}
+              disabled={!newObra.trim()} // Deshabilita si el input está vacío
+            >
+              <Text style={styles.addButtonText}>OBRA NUEVA</Text>
+            </Pressable>
+          </View>
+
+          <View style={styles.historyContainer}>
+            <Pressable
+              style={styles.addButton}
+              onPress={() => router.push("/(app)/history")}
+            >
+              <Text style={styles.addButtonText}>HISTORIAL FICHAJES</Text>
+            </Pressable>
+          </View>
+          <View style={styles.infoTextBox}>
+            <Text style={styles.infoText}>A3D MEDIA 2025 V1.1</Text>
+          </View>
         </View>
       </View>
     </ParallaxScrollView>
@@ -239,21 +254,55 @@ export default function HomeScreen() {
 }
 
 const styles = StyleSheet.create({
-  logoA3D: {
+  headerContainer: {
+    padding: 10,
+    justifyContent: "center",
+    alignItems: "center",
+    position: "relative",
+    height: 120,
+  },
+  reactLogo: {
     height: 100,
-    width: "95%",
+    width: "100%",
+    position: "absolute",
+    // opacity: 0.2,
+  },
+
+  logoA3D: {
+    backgroundColor: "#fff",
+    height: 90,
+    width: 300,
     bottom: 20,
     right: 20,
     left: 10,
     position: "absolute",
   },
+  contenedor: {
+    height: "100%",
+    padding: 20,
+    paddingTop: 60,
+    backgroundColor: "#E3F2FD",
+  },
   addButton: {
-    backgroundColor: "#007BFF",
-    paddingVertical: 15,
-    borderRadius: 10,
+    // backgroundColor: "#007BFF",
+    // paddingVertical: 15,
+    // borderRadius: 10,
+    // alignItems: "center",
+    // justifyContent: "center",
+    // marginBottom: 15,
+    // marginTop: 7,
+    flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: 15,
+    backgroundColor: "#007BFF",
+    borderRadius: 50,
+    paddingVertical: 15,
+    marginVertical: 10,
+    width: "100%",
+    shadowColor: "#000",
+    shadowOpacity: 0.3,
+    shadowRadius: 5,
+    elevation: 5,
   },
   label: {
     fontSize: 18,
@@ -364,11 +413,22 @@ const styles = StyleSheet.create({
     borderColor: "#ccc",
     borderRadius: 5,
     padding: 10,
-    marginBottom: 15,
+    marginTop: 25,
     fontSize: 16,
     color: "#333",
   },
   historyContainer: {
+    marginTop: 40,
     bottom: 0,
+  },
+  infoText: {
+    left: 190,
+    marginTop: 50,
+    fontSize: 8,
+    color: "#2f4f4f",
+  },
+  infoTextBox: {
+    height: 150,
+    backgroundColor: "#E3F2FD",
   },
 });

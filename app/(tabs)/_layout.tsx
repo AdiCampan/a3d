@@ -1,11 +1,15 @@
 import { Tabs, useRouter } from "expo-router";
-import { FontAwesome5 } from "@expo/vector-icons";
+import { FontAwesome, FontAwesome5 } from "@expo/vector-icons";
 import { useColorScheme } from "@/hooks/useColorScheme";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { Colors } from "@/constants/Colors";
 import { Pressable } from "react-native";
 import { useSession } from "@/ctx";
+import SimpleLineIcons from "@expo/vector-icons/SimpleLineIcons";
+import AntDesign from "@expo/vector-icons/AntDesign";
 
 export default function TabLayout() {
+  const { signOut } = useSession();
   const router = useRouter();
   const colorScheme = useColorScheme();
   const { session, trabajadores, isLoading } = useSession();
@@ -21,7 +25,18 @@ export default function TabLayout() {
             onPress={() => router.push("/settings")}
             style={{ marginRight: 15 }}
           >
-            <FontAwesome5 name="cog" size={24} color="black" />
+            <AntDesign name="setting" size={24} color="black" />
+          </Pressable>
+        ),
+        headerLeft: () => (
+          <Pressable
+            onPress={() => {
+              signOut();
+              router.replace("/sign-in");
+            }}
+            style={{ paddingLeft: 15, marginRight: 35 }}
+          >
+            <SimpleLineIcons name="logout" size={24} color="black" />
           </Pressable>
         ),
       }}
@@ -50,6 +65,15 @@ export default function TabLayout() {
           title: "Almacén",
           tabBarIcon: ({ color }) => (
             <FontAwesome5 name="store" size={24} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="obras"
+        options={{
+          title: "Obras",
+          tabBarIcon: ({ color }) => (
+            <MaterialIcons name="home-work" size={24} color={color} />
           ),
         }}
       />

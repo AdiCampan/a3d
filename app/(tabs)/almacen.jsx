@@ -58,14 +58,18 @@ export default function AlmacenScreen() {
         await updateDoc(toolRef, {
           ...newTool,
           date: serverTimestamp(), // 🔥 Se guarda la fecha de modificación
+          id: selectedTool.id,
         });
         Alert.alert("Éxito", "Herramienta actualizada correctamente");
       } else {
         // 🔹 Agregar nueva herramienta con fecha de creación
-        await addDoc(collection(db, "heramientas"), {
+        const docRef = await addDoc(collection(db, "heramientas"), {
           ...newTool,
-          date: serverTimestamp(), // 🔥 Se guarda la fecha de asignación
+          date: serverTimestamp(),
         });
+
+        // 🔹 Ahora actualizar el documento para incluir el ID
+        await updateDoc(docRef, { id: docRef.id });
         Alert.alert("Éxito", "Herramienta añadida correctamente");
       }
 
