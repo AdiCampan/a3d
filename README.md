@@ -25,8 +25,7 @@ In the output, you'll find options to open the app in a
 
 You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
 
-## WHAT IS OFFER THIS APP
-This is an App for schedule program of a small enterprise. It's easy tu add administrator and workers to control hours of entrance and exits,
-addresses of work points. Also it can be fully controled of many tools that can be in workshop or worker. 
-  Offers posibility to obtain grafics and statistics with work points, workers and hour eploys in a work point.
-  
+##  WHAT DOES THIS APP OFFER?
+Our application is designed to simplify schedule and resource management for small businesses. It provides an intuitive way to add administrators and employees, monitor entry and exit times, and organize worksite locations.
+
+With powerful control features, you can manage tools and equipment assigned to workshops or individual workers. The app also generates detailed charts and statistics, giving you valuable insights into worksites, workforce activity, and the time invested in each project.
